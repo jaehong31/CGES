@@ -24,14 +24,6 @@ git clone --recursive https://github.com/jaehong-yoon93/CGES.git CGES
 
 ### Run examples
 
-Before you start and acquire the same experiment result of ours, you need preprocessed Cifar 100 dataset as described on the paper. We assumed that the dataset is located on the top directory(cloned directory), named 'cifar100'. Please change lmdb file locations which are specified on train_val.prototxt
-
-You also need taxonomy tree in the form of prototxt. The sample taxonomy tree for Cifar 100 dataset is given on the directory.
-
-If you execute run.sh script, then you can start training, or you can directly start it from a shell. The script provided is only for less typing :) And, with provided trained model and small modification of scripts and prototxt, you can reproduce our experiment results.
-
-
-
 In the code, you can run our model on MNIST dataset. Then, you don't need to download dataset on your own, just you can get the daataset when you run our code.
 If you want to apply the model to your own data, you need to edit code a little bit. 
 
