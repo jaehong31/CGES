@@ -1,7 +1,7 @@
 # Combined Group and Exclusive Sparsity for Deep Networks(CGES)
 + Jaehong Yoon(UNIST), and Sung Ju Hwang(UNIST)
 
-This project hosts the code for our **ICML 2017** papr.
+This project hosts the code for our **ICML 2017** paper.
 
 Repository will be updated soon.
 
