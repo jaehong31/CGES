@@ -24,7 +24,7 @@ git clone --recursive https://github.com/jaehong-yoon93/CGES.git CGES
 
 ### Run examples
 
-In the code, you can run our model on MNIST dataset. Then, you don't need to download dataset on your own, just you can get the daataset when you run our code.
+In this code, you can run our model on MNIST dataset. Then, you don't need to download dataset on your own, just you can get the daataset when you run our code.
 If you want to apply the model to your own data, you need to edit code a little bit. 
 
 For convinence, we added that code prints out sparsity of each layer, training & test accuracy, and several parameter information.
