@@ -65,14 +65,14 @@ if FLAGS.cges:
     for vind, var in enumerate(S_vars):
         # GS 
         group_sum = tf.reduce_sum(tf.square(var), -1)
-        g_param = learning_rate * FLAGS.lamb * 0.02 * (FLAGS.mu - vind * FLAGS.chvar)
+        g_param = learning_rate * FLAGS.lamb * (FLAGS.mu - vind * FLAGS.chvar)
         gl_comp = 1. - g_param * layerwise[vind] * tf.rsqrt(group_sum)
         gl_plus = tf.cast(gl_comp > 0, tf.float32) * gl_comp
         gl_stack = tf.stack([gl_plus for _ in range(var.get_shape()[-1])], -1)
         gl_op = gl_stack * var 
 
         # ES
-        e_param = learning_rate * FLAGS.lamb * 0.02 * ((1. - FLAGS.mu) + vind * FLAGS.chvar)
+        e_param = learning_rate * FLAGS.lamb * ((1. - FLAGS.mu) + vind * FLAGS.chvar)
         W_sum = e_param * layerwise[vind] * tf.reduce_sum(tf.abs(gl_op), -1)
         W_sum_stack = tf.stack([W_sum for _ in range(gl_op.get_shape()[-1])], -1)
         el_comp = tf.abs(gl_op) - W_sum_stack
@@ -99,7 +99,6 @@ for i in range(FLAGS.max_iter):
         ratio_w, sp = utils._comp(S_vars)
         _sp = sess.run(sp)
 
-        print("lambda : %.2f, mu : %.2f, chvar : %.2f" %(FLAGS.lamb, FLAGS.mu, FLAGS.chvar))
         print("loss: %.4f sp: %0.4f %0.4f %0.4f %0.4f :: using param : %.4f" \
             %(tr_loss, _sp[0], _sp[1], _sp[2], _sp[3], sess.run(ratio_w)))
         
@@ -117,4 +116,4 @@ for i in range(FLAGS.max_iter):
         flop = utils._cost(_sp)
         print("FLOP : %.4f" %(flop))
         if FLAGS.cges:
-            print('CGES')
+            print('CGES, lambda : %f, mu : %.2f, chvar : %.2f' %(FLAGS.lamb, FLAGS.mu, FLAGS.chvar))
