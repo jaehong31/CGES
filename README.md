@@ -3,8 +3,6 @@
 
 This project hosts the code for our **ICML 2017** paper.
 
-Repository will be updated soon.
-
 We propose a sparsity regularization method that exploits both positive and negative correlations
 among the features to enforce the network to be sparse, and at the same time remove any redundancies
 among the features to fully utilize the capacity of the network. Specifically, we propose
