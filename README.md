@@ -15,7 +15,7 @@ Reference will be updated soon.
 
 ## Running Code
 
-We implemented a combined regularizer as described in the paper based on Tensorflow library[Tensorflow](https://www.tensorflow.org/).
+We implemented a combined regularizer as described in the paper based on Tensorflow library, [Tensorflow](https://www.tensorflow.org/).
 
 ### Get our code
 ```
