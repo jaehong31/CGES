@@ -10,7 +10,12 @@ We propose a sparsity regularization method that exploits both positive and nega
 If you use this code as part of any published research, please refer the following paper.
 
 ```
-Reference will be updated soon.
+@inproceedings{yoon2017cges,
+    author    = {Jaehong Yoon and Sung Ju Hwang},
+    title     = {Combined Group and Exclusive Sparsity for Deep Networks},
+    booktitle = {ICML},
+    year      = {2017}
+}
 ```
 
 ## Running Code
