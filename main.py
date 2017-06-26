@@ -53,7 +53,7 @@ y_conv = mnist_conv(x, 10, keep_prob)
 S_vars = [svar for svar in tf.trainable_variables() if 'weight' in svar.name]
 ff_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_conv, labels=y_)) 
 if not FLAGS.cges:
-    ff_loss_reg = ff_loss + learning_rate * 0.1 * \
+    ff_loss_reg = ff_loss + learning_rate * 0.01 * \
                 tf.reduce_sum([tf.nn.l2_loss(var) for var in S_vars])
 else:
     ff_loss_reg = ff_loss
