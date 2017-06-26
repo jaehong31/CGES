@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
 
+glayerwise = [1.,1.0, 1./15, 1./144]
+elayerwise = [1.,0.5, 15., 144.]
+
 def _comp(all_vars):
     weight_size = []
     sparsity = []

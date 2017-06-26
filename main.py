@@ -8,7 +8,7 @@ import utils
 # Model Configuration #
 #######################
 tf.app.flags.DEFINE_float('base_lr', 0.05, 'initialized learning rate')
-tf.app.flags.DEFINE_float('stepsize', 100000, '')
+tf.app.flags.DEFINE_float('stepsize', 5000, '')
 tf.app.flags.DEFINE_float('decay_rate', 0.9, '')
 tf.app.flags.DEFINE_float('memory_usage', 0.94, '')
 tf.app.flags.DEFINE_integer('train_display', 100, '')
@@ -39,11 +39,6 @@ keep_prob = tf.placeholder(tf.float32)
 W = tf.Variable(tf.zeros([784, 10]))
 b = tf.Variable(tf.zeros([10])) 
 
-from mnist_model import mnist_conv
-y_conv = mnist_conv(x, 10, keep_prob)
-
-ff_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_conv, labels=y_))
-
 batch = tf.Variable(0, trainable=False)
 learning_rate = tf.train.exponential_decay(
     FLAGS.base_lr,      # Base learning rate.
@@ -52,17 +47,24 @@ learning_rate = tf.train.exponential_decay(
     FLAGS.decay_rate,   # Decay rate. 
     staircase=True)  
 
+from mnist_model import mnist_conv
+y_conv = mnist_conv(x, 10, keep_prob)
 
 S_vars = [svar for svar in tf.trainable_variables() if 'weight' in svar.name]
+ff_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_conv, labels=y_)) 
+if not FLAGS.cges:
+    ff_loss_reg = ff_loss + learning_rate * 0.1 * \
+                tf.reduce_sum([tf.nn.l2_loss(var) for var in S_vars])
+else:
+    ff_loss_reg = ff_loss
 
-opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(ff_loss, global_step=batch)
+opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(ff_loss_reg, global_step=batch)
 
 op_list = []
 if FLAGS.cges:
     # Normalization parameter  
-    glayerwise = [1.,1.,1./15, 1./144]
-    elayerwise = [1.,1.,15., 144.]
-
+    glayerwise = utils.glayerwise
+    elayerwise = utils.elayerwise
     for vind, var in enumerate(S_vars):
         # GS 
         group_sum = tf.reduce_sum(tf.square(var), -1)
