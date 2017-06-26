@@ -31,24 +31,17 @@ def mnist_conv(x, num_classes, keep_prob):
   relu2 = tf.nn.relu(conv2d(pool1, filter2) + bias2)
   pool2 = max_pool_2x2(relu2)
 
-  fc3 = weight_variable([1024, 7 * 7 * 64], 3)
+  fc3 = weight_variable([7 * 7 * 64, 1024], 3)
   bias3 = bias_variable([1024], 3)
-#  fc3 = weight_variable([7 * 7 * 64, 1024], 3)
-#  bias3 = bias_variable([1024], 3)
 
   flat_pool2 = tf.reshape(pool2, [-1, 7 * 7 * 64])
-#  relu3 = tf.nn.relu(tf.matmul(flat_pool2, fc3) + bias3)
-  relu3 = tf.nn.relu(tf.matmul(flat_pool2, tf.transpose(fc3)) + bias3)
+  relu3 = tf.nn.relu(tf.matmul(flat_pool2, fc3) + bias3)
 
   drop = tf.nn.dropout(relu3, keep_prob)
-#  drop = relu3
   
-#  fc4 = weight_variable([1024, 10], 4)
-#  bias4 = bias_variable([10], 4)
-  fc4 = weight_variable([10, 1024], 4)
+  fc4 = weight_variable([1024, 10], 4)
   bias4 = bias_variable([10], 4)
-#  output = tf.matmul(drop, fc4) + bias4
-  output = tf.matmul(drop, tf.transpose(fc4)) + bias4
+  output = tf.matmul(drop, fc4) + bias4
 
   return tf.nn.softmax(output)
 

@@ -8,7 +8,7 @@ import utils
 # Model Configuration #
 #######################
 tf.app.flags.DEFINE_float('base_lr', 0.05, 'initialized learning rate')
-tf.app.flags.DEFINE_float('stepsize', 10000, '')
+tf.app.flags.DEFINE_float('stepsize', 100000, '')
 tf.app.flags.DEFINE_float('decay_rate', 0.9, '')
 tf.app.flags.DEFINE_float('memory_usage', 0.94, '')
 tf.app.flags.DEFINE_integer('train_display', 100, '')
@@ -46,34 +46,35 @@ ff_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_conv, 
 
 batch = tf.Variable(0, trainable=False)
 learning_rate = tf.train.exponential_decay(
-    FLAGS.base_lr,                # Base learning rate.
-    batch,     # Current index into the dataset. 
-    FLAGS.stepsize,               # Decay step. 
-    FLAGS.decay_rate,                   # Decay rate. 
+    FLAGS.base_lr,      # Base learning rate.
+    batch,              # Current index. 
+    FLAGS.stepsize,     # Decay iteration step. 
+    FLAGS.decay_rate,   # Decay rate. 
     staircase=True)  
 
 
 S_vars = [svar for svar in tf.trainable_variables() if 'weight' in svar.name]
-C_vars = S_vars[:2]
-F_vars = S_vars[2:]
 
 opt = tf.train.GradientDescentOptimizer(learning_rate).minimize(ff_loss, global_step=batch)
 
 op_list = []
-if FLAGS.cges:  
-    layerwise = [1.,1.,1.,1.]
+if FLAGS.cges:
+    # Normalization parameter  
+    glayerwise = [1.,1.,1./15, 1./144]
+    elayerwise = [1.,1.,15., 144.]
+
     for vind, var in enumerate(S_vars):
         # GS 
         group_sum = tf.reduce_sum(tf.square(var), -1)
         g_param = learning_rate * FLAGS.lamb * (FLAGS.mu - vind * FLAGS.chvar)
-        gl_comp = 1. - g_param * layerwise[vind] * tf.rsqrt(group_sum)
+        gl_comp = 1. - g_param * glayerwise[vind] * tf.rsqrt(group_sum)
         gl_plus = tf.cast(gl_comp > 0, tf.float32) * gl_comp
         gl_stack = tf.stack([gl_plus for _ in range(var.get_shape()[-1])], -1)
         gl_op = gl_stack * var 
 
         # ES
         e_param = learning_rate * FLAGS.lamb * ((1. - FLAGS.mu) + vind * FLAGS.chvar)
-        W_sum = e_param * layerwise[vind] * tf.reduce_sum(tf.abs(gl_op), -1)
+        W_sum = e_param * elayerwise[vind] * tf.reduce_sum(tf.abs(gl_op), -1)
         W_sum_stack = tf.stack([W_sum for _ in range(gl_op.get_shape()[-1])], -1)
         el_comp = tf.abs(gl_op) - W_sum_stack
         el_plus = tf.cast(el_comp > 0, tf.float32) * el_comp
@@ -93,8 +94,10 @@ for i in range(FLAGS.max_iter):
 
     # Display
     if (i+1) % FLAGS.train_display == 0:
-        train_accuracy, tr_loss = sess.run([accuracy, ff_loss], feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0})
-        print("step %d, lr %.4f, training accuracy %g"%(i+1, sess.run(learning_rate), train_accuracy))
+        train_accuracy, tr_loss = sess.run([accuracy, ff_loss], \
+                        feed_dict={x: batch[0], y_: batch[1], keep_prob: 1.0})
+        print("step %d, lr %.4f, training accuracy %g" \
+                %(i+1, sess.run(learning_rate), train_accuracy))
 
         ratio_w, sp = utils._comp(S_vars)
         _sp = sess.run(sp)
@@ -109,11 +112,13 @@ for i in range(FLAGS.max_iter):
 
     # Testing
     if (i+1) % FLAGS.test_iter == 0:
-        test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0})
+        test_acc = sess.run(accuracy, feed_dict={x: mnist.test.images, \
+                        y_: mnist.test.labels, keep_prob: 1.0})
         print("test accuracy %0.4f" %(test_acc))
  
         # Computing FLOP
         flop = utils._cost(_sp)
         print("FLOP : %.4f" %(flop))
         if FLAGS.cges:
-            print('CGES, lambda : %f, mu : %.2f, chvar : %.2f' %(FLAGS.lamb, FLAGS.mu, FLAGS.chvar))
+            print('CGES, lambda : %f, mu : %.2f, chvar : %.2f' \
+                        %(FLAGS.lamb, FLAGS.mu, FLAGS.chvar))
