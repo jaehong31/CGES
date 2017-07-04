@@ -45,6 +45,7 @@ This work was supported by Basic Science Research Program through the National R
 
 ## Authors
 
-[Jaehong Yoon](http://vision.snu.ac.kr/jaehong-yoon93/)<sup>1</sup>, and [Sung Ju Hwang](http://www.sungjuhwang.com/)<sup>1</sup>
+[Jaehong Yoon](http://vision.snu.ac.kr/jaehong-yoon93/)<sup>1</sup>, and [Sung Ju Hwang](http://www.sungjuhwang.com/)<sup>1</sup><sup>2</sup>
 
 <sup>1</sup>[MLVR Lab](http://ml.unist.ac.kr/) @ School of Electrical and Computer Engineering, UNIST, Ulsan, South Korea
+<sup>2</sup>[AItrics](https://www.aitrics.com/) @ Seoul, South Korea
