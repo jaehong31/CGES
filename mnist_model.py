@@ -43,7 +43,7 @@ def mnist_conv(x, num_classes, keep_prob):
   bias4 = bias_variable([10], 4)
   output = tf.matmul(drop, fc4) + bias4
 
-  return tf.nn.softmax(output)
+  return output
 
   
   
