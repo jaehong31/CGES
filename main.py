@@ -49,6 +49,7 @@ learning_rate = tf.train.exponential_decay(
 
 from mnist_model import mnist_conv
 y_conv = mnist_conv(x, 10, keep_prob)
+y_preds = tf.nn.softmax(y_conv)
 
 S_vars = [svar for svar in tf.trainable_variables() if 'weight' in svar.name]
 ff_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y_conv, labels=y_)) 
@@ -86,7 +87,7 @@ if FLAGS.cges:
     with tf.control_dependencies(op_list):
         cges_op_list = tf.no_op()
 
-correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
+correct_prediction = tf.equal(tf.argmax(y_preds, 1), tf.argmax(y_, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 sess.run(tf.global_variables_initializer())
 
